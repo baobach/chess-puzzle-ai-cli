@@ -1,0 +1,11 @@
+config.ini
+.coverage
+*.pyc
+*.egg-info
+*.spec
+*.eggs/
+dist/
+build/
+__pycache__/
+*venv/
+.vscode/

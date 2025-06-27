@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "chess_puzzle_ai_cli"
+version = "0.1.0"
+description = "Solving Chess Puzzles while waiting for your AI Agents to complete the ta."
+authors = ["Robert Bach"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9.23"
+rich = "^14.0.0"
+chess = "^1.11.2"
+requests = "^2.28.1"
+prompt-toolkit = "^3.0.51"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.4.1"
+
+[tool.poetry.scripts]
+chess-puzzle-ai-cli = "chess_puzzle_ai_cli.chess_puzzle_ai_cli:main"
+
+[tool.semantic_release]
+version_toml = [
+    "pyproject.toml:tool.poetry.version",
+]                                                    # version location
+branch = "main"                                      # branch to make releases of
+changelog_file = "CHANGELOG.md"                      # changelog file
+build_command = "pip install poetry && poetry build" # build dists 
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
