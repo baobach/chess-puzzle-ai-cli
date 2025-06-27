@@ -62,9 +62,9 @@ We will adopt a block-by-block development approach, ensuring a functional compo
 ### Phase 1: The Standalone Chess Puzzle
 **Goal**: Develop a fully functional, interactive chess puzzle CLI tool, independent of the AI agent wrapper.
 
-1.  **Project Setup**: Initialize a Python project with `pyproject.toml` to manage dependencies (`rich`, `python-chess`, `requests`).
-2.  **Fetch Puzzle**: Implement a function to retrieve a chess puzzle (FEN, moves) from the Lichess API.
-3.  **Display Board**: Create a function using `rich` to render a colorized chessboard in the terminal.
+1.  **Project Setup**: Initialize a Python project with `pyproject.toml` to manage dependencies (`python-chess`, `requests`, `berserk`, `prompt-toolkit`).
+2.  **Display Default Board & Pieces**: Adapt and integrate the board and piece display logic from `cli-chess` to render a colorized chessboard and pieces in the terminal using `prompt-toolkit` with a default starting position.
+3.  **Fetch Puzzle**: Implement a function to retrieve a chess puzzle (FEN, moves) from the Lichess API.
 4.  **Interactive Game Loop**: Implement the core game loop, handling user moves, validating them against the puzzle solution, providing feedback, and updating the board until the puzzle is solved or the user quits.
 
 ### Phase 2: The AI Agent Wrapper Integration
