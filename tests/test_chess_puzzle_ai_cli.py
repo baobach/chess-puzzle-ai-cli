@@ -1,1 +1,0 @@
-from chess_puzzle_ai_cli import chess_puzzle_ai_cli
