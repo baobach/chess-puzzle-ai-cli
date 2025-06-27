@@ -23,15 +23,33 @@ The core of this application will be a **wrapper CLI**. Instead of directly runn
 
 This wrapper approach provides a robust and self-contained solution for managing the lifecycle of the wrapped AI agent.
 
+## Folder Structure
+
+The `src/chess_puzzle_ai_cli/` directory is organized into the following subdirectories:
+
+*   **`core/`**: This directory contains the core functionalities of the application. It houses the main logic that orchestrates the interaction between various modules and drives the overall program flow when CLI commands are executed. Functions here are responsible for gluing together the different components to run the program.
+
+*   **`modules/`**: This directory is dedicated to modular features and components. Each subdirectory within `modules/` represents a distinct feature or set of related functionalities, such as:
+    *   Displaying the chess board.
+    *   Handling chess piece representation and movement.
+    *   Implementing legal move validation.
+    *   Loading and managing chess puzzles.
+    *   Any other additional features that can be developed and maintained independently.
+
+*   **`tests/`**: This directory is for organizing all unit and integration tests. It mirrors the structure of `core/` and `modules/` to ensure that tests are co-located with the code they validate, facilitating better development practices and easier debugging.
+
+*   **`utils/`**: This directory contains utility functions and helper scripts that are used across different parts of the application. These are general-purpose functions that support the main program logic but do not belong to a specific core or module feature.
+
 ## Proposed Technology Stack
 
 **Language**: Python 3
 
 **Key Libraries:**
 
-*   [python-chess](https://github.com/niklasf/python-chess): For handling all chess-related logic, board states, and move validation.
-*   [rich](https://github.com/Textualize/rich): For creating a visually appealing and interactive terminal user interface, including rendering the chessboard.
-*   [requests](https://github.com/psf/requests): For making HTTP requests to fetch chess puzzles from an external API.
+*   [python-chess](https://github.com/niklasf/python-chess): For handling all chess-related logic, board states, and move validation. (>=1.9.4,<2.0.0)
+*   [requests](https://github.com/psf/requests): For making HTTP requests to fetch chess puzzles from an external API. (^2.28.1)
+*   [berserk](https://github.com/lichess-org/berserk): A Lichess API client for Python. (>=0.13.1,<0.14.0)
+*   [prompt-toolkit](https://github.com/prompt-toolkit/python-prompt-toolkit): For building interactive command-line applications. (==3.0.47)
 *   [subprocess](https://docs.python.org/3/library/subprocess.html) (built-in Python module): For managing and monitoring the background AI agent process.
 *   [argparse](https://docs.python.org/3/library/argparse.html) (built-in Python module): For parsing command-line arguments.
 

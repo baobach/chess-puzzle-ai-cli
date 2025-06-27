@@ -19,3 +19,24 @@ As a Gemini agent, my role in this project is to act as a **Software Engineer (S
 ## Communication
 -   I will provide clear, concise, and direct communication, focusing on actions taken, plans, and any necessary clarifications.
 -   I will explain critical commands before execution, especially those that modify the file system or system state.
+
+## External APIs
+-   **Lichess API**: Used for fetching chess puzzles and interacting with Lichess.org.
+-   **Berserk**: A Python client library for the Lichess API, used for easier interaction with the Lichess API.
+
+## Project Folder Structure
+
+The `src/chess_puzzle_ai_cli/` directory is organized into the following subdirectories:
+
+*   **`core/`**: This directory contains the core functionalities of the application. It houses the main logic that orchestrates the interaction between various modules and drives the overall program flow when CLI commands are executed. Functions here are responsible for gluing together the different components to run the program.
+
+*   **`modules/`**: This directory is dedicated to modular features and components. Each subdirectory within `modules/` represents a distinct feature or set of related functionalities, such as:
+    *   Displaying the chess board.
+    *   Handling chess piece representation and movement.
+    *   Implementing legal move validation.
+    *   Loading and managing chess puzzles.
+    *   Any other additional features that can be developed and maintained independently.
+
+*   **`tests/`**: This directory is for organizing all unit and integration tests. It mirrors the structure of `core/` and `modules/` to ensure that tests are co-located with the code they validate, facilitating better development practices and easier debugging.
+
+*   **`utils/`**: This directory contains utility functions and helper scripts that are used across different parts of the application. These are general-purpose functions that support the main program logic but do not belong to a specific core or module feature.
