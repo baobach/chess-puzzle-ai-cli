@@ -6,22 +6,7 @@ To create an interactive Command Line Interface (CLI) tool that launches a chess
 
 ## High-Level Vision & Architecture
 
-The core of this application will be a **wrapper CLI**. Instead of directly running their AI agent command, the user will pass it as an argument to our tool.
-
-**Workflow:**
-
-1.  **User Input**: `chess-puzzle-cli --command "your-ai-agent-command --with --args"`
-2.  **Tool Initialization**:
-    *   The tool launches the specified AI agent command as a **background process**.
-    *   It stores the Process ID (PID) of the background agent.
-3.  **Puzzle Launch**: While the AI agent runs, the interactive chess puzzle is launched in the **foreground**.
-    *   The UI will display a chessboard, a timer, and a status message indicating the AI agent's activity.
-4.  **Termination Conditions**: The chess puzzle loop will continuously monitor:
-    *   The completion status of the background AI agent process.
-    *   User input to manually quit the puzzle (e.g., by typing 'q').
-5.  **Cleanup**: Upon meeting either termination condition, the tool will gracefully exit, ensuring the terminal is restored to its original state.
-
-This wrapper approach provides a robust and self-contained solution for managing the lifecycle of the wrapped AI agent.
+The `chess-puzzle-ai-cli` will function as an interactive companion CLI tool, designed to be launched by an external AI agent (e.g., Gemini CLI, Claude Code). Its primary purpose is to provide an engaging chess puzzle experience to the user while the AI agent performs long-running background tasks.
 
 ## Folder Structure
 
@@ -55,29 +40,62 @@ The `src/chess_puzzle_ai_cli/` directory is organized into the following subdire
 
 **Puzzle Source**: [Lichess API](https://lichess.org/api) (for fetching daily or themed chess puzzles).
 
+## Workflow
+
+1.  **AI Agent Invocation**: An external AI agent (e.g., Gemini CLI) initiates a long-running task and, in parallel, invokes `chess-puzzle-ai-cli` as a sub-process. The AI agent passes necessary communication parameters (e.g., a path to a shared clock file, a task completion signal file) to `chess-puzzle-ai-cli`.
+    *   *Example Invocation*: `gemini run chess-puzzle-ai-cli --clock-file /tmp/gemini_clock.txt --status-file /tmp/gemini_status.txt`
+2.  **Communication Setup**: `chess-puzzle-ai-cli` establishes a communication channel with the invoking AI agent to receive real-time updates on the AI agent's task progress (e.g., a ticking clock) and eventual task completion.
+3.  **Interactive Puzzle Launch**: Upon successful communication setup, `chess-puzzle-ai-cli` launches its interactive chess puzzle UI in the foreground.
+    *   The UI will display:
+        *   A chessboard.
+        *   A counting clock, synchronized with the AI agent's progress.
+        *   A user input area for making moves.
+        *   A dedicated area for displaying feedback, including incorrect or illegal moves.
+        *   A dynamic menu bar at the bottom, offering commands such as "Terminate Puzzle" (to return control to the AI agent) and displaying notifications like "AI Task Completed!".
+4.  **Continuous Monitoring & Interaction**: The chess puzzle loop continuously:
+    *   Updates the displayed clock based on signals from the AI agent.
+    *   Processes user chess moves, validates them, and updates the board.
+    *   Monitors the AI agent's task completion status.
+5.  **Termination Conditions**:
+    *   **AI Task Completion**: When the AI agent signals task completion, the puzzle UI will notify the user and offer options to either continue playing the puzzle or return to the AI agent's prompt.
+    *   **User Termination**: The user can explicitly terminate the puzzle via the menu bar, returning control to the AI agent.
+6.  **Graceful Exit**: Upon any termination condition, `chess-puzzle-ai-cli` will gracefully exit, ensuring the terminal is restored to its original state and any communication channels are properly closed.
+
 ## Phased Implementation Plan
 
 We will adopt a block-by-block development approach, ensuring a functional component at the end of each phase.
 
-### Phase 1: The Standalone Chess Puzzle
-**Goal**: Develop a fully functional, interactive chess puzzle CLI tool, independent of the AI agent wrapper.
+### Phase 1: Core Puzzle UI with External Communication Hooks
+**Goal**: Develop a fully functional, interactive chess puzzle CLI tool, capable of displaying a board, handling basic user input, and establishing initial communication with an external source for clock synchronization and task status.
 
 1.  **Project Setup**: Initialize a Python project with `pyproject.toml` to manage dependencies (`python-chess`, `requests`, `berserk`, `prompt-toolkit`).
 2.  **Display Default Board & Pieces**: Adapt and integrate the board and piece display logic from `cli-chess` to render a colorized chessboard and pieces in the terminal using `prompt-toolkit` with a default starting position.
-3.  **Fetch Puzzle**: Implement a function to retrieve a chess puzzle (FEN, moves) from the Lichess API.
-4.  **Interactive Game Loop**: Implement the core game loop, handling user moves, validating them against the puzzle solution, providing feedback, and updating the board until the puzzle is solved or the user quits.
+3.  **Initial External Communication & Clock Display**:
+    *   Implement command-line arguments (`--clock-file`, `--status-file`) to receive paths for communication.
+    *   Implement a basic file-reading mechanism to periodically read a simulated clock value from `--clock-file`.
+    *   Adapt the existing `cli-chess` clock module to read from the designated clock file instead of an internal timer. This will involve a `ClockModel` that reads the file and a `ClockPresenter` that updates the `ClockView`.
+    *   Display this external clock value in the UI.
+4.  **Basic User Input & Feedback**:
+    *   Implement a user input area for chess moves.
+    *   Add a new UI component (e.g., another `TextArea` or `FormattedTextControl`) to display messages about incorrect moves or illegal moves.
+5.  **Interactive Game Loop (Basic)**: Adapt the core game loop to incorporate the external clock display and basic user input.
 
-### Phase 2: The AI Agent Wrapper Integration
-**Goal**: Integrate the standalone chess puzzle into the wrapper that manages a background process.
+### Phase 2: AI Agent Communication & Enhanced UI
+**Goal**: Establish robust communication with an external AI agent and enhance the UI to reflect the AI agent's status and provide comprehensive user interaction.
 
-1.  **CLI Entrypoint**: Develop the main script to accept the `--command` argument using `argparse`.
-2.  **Process Management**: Implement logic to execute the provided command as a background process using `subprocess` and monitor its status.
-3.  **Integrate Game Loop**: Launch the background command first, then start the chess puzzle game loop. Modify the UI to include a timer and the "AI agent running..." status.
-4.  **Termination Logic**: Enhance the game loop to periodically check for the background process's completion. If completed, the puzzle will announce it and exit automatically.
+1.  **Refined Communication Protocol & Termination Signaling**:
+    *   Implement a more robust file-based protocol (or named pipes, if deemed necessary after initial testing) for real-time clock synchronization and task completion signals.
+    *   Implement a mechanism to signal back to the AI agent if the puzzle is terminated by the user.
+2.  **Dynamic UI Elements & Notifications**:
+    *   Implement the dynamic menu bar with a "Terminate Puzzle" option.
+    *   Implement the "AI Task Completed!" notification display using a dedicated `AlertContainer`.
+3.  **Process Monitoring (Passive)**: Implement logic to passively monitor the AI agent's process status (e.g., checking if the PID passed via argument is still active) to handle unexpected AI agent termination.
+4.  **Puzzle Integration**: Integrate fetching and displaying actual chess puzzles from the Lichess API.
 
-### Phase 3: Refinements and Packaging
-**Goal**: Polish the tool, add comprehensive error handling, and prepare it for easy installation and distribution.
+### Phase 3: Robustness, Packaging, and Advanced Features
+**Goal**: Polish the tool, add comprehensive error handling, and prepare it for easy installation and distribution, along with any advanced features.
 
-1.  **Robust Input**: Improve the user input handling to support commands like `quit`, `hint`, or `redraw board`.
-2.  **Error Handling**: Implement robust error checks for network issues, invalid user input, and other potential failures.
-3.  **Packaging**: Configure `pyproject.toml` for proper packaging with `pip`, enabling the creation of a runnable `chess-puzzle-cli` command.
+1.  **Comprehensive Error Handling**: Implement robust error checks for network issues, invalid user input, and other potential failures.
+2.  **Packaging**: Configure `pyproject.toml` for proper packaging with `pip`, enabling the creation of a runnable `chess-puzzle-cli` command.
+3.  **Advanced Puzzle Features**: Implement features such as a hint system and puzzle difficulty selection.
+4.  **Configuration for Communication**: Allow users to configure communication parameters (e.g., file paths, polling intervals) via a configuration file.

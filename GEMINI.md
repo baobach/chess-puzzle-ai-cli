@@ -40,3 +40,12 @@ The `src/chess_puzzle_ai_cli/` directory is organized into the following subdire
 *   **`tests/`**: This directory is for organizing all unit and integration tests. It mirrors the structure of `core/` and `modules/` to ensure that tests are co-located with the code they validate, facilitating better development practices and easier debugging.
 
 *   **`utils/`**: This directory contains utility functions and helper scripts that are used across different parts of the application. These are general-purpose functions that support the main program logic but do not belong to a specific core or module feature.
+
+## Instruction needed for developing functions and implementing features
+- The `PLANNING.md` file contain the outline and planning phase of the model. Use this when ever creating new functions or implement any features. Use this as groundtruth and if the features or functions are outside the scope of the planning or not suitable for the Workflow, warning the user for critical change that is diverse from the original plan.
+
+### How to use PLANNING.md:
+- **`## Folder Structure`**: I will use this section as a reference whenever I need to copy, move, or create a new file, ensuring adherence to the project's established directory organization.
+- **`## Proposed Technology Stack`**: This section lists the libraries and packages used in this project. I will refer to this to understand the purpose of each tool and ensure consistency in technology choices.
+- **`## Workflow`**: This provides a detailed instruction of the software's expected behavior. I will use this to understand the overall flow and ensure that implemented features align with the intended user experience.
+- **`## Phased Implementation Plan`**: This section serves as the project roadmap. I will use this as guidance to navigate through the development process, ensuring that tasks are completed in the defined order and contribute to the overall project goals.
