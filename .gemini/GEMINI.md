@@ -42,7 +42,7 @@ The `src/chess_puzzle_ai_cli/` directory is organized into the following subdire
 *   **`utils/`**: This directory contains utility functions and helper scripts that are used across different parts of the application. These are general-purpose functions that support the main program logic but do not belong to a specific core or module feature.
 
 ## Instruction needed for developing functions and implementing features
-- The `PLANNING.md` file contain the outline and planning phase of the model. Use this when ever creating new functions or implement any features. Use this as groundtruth and if the features or functions are outside the scope of the planning or not suitable for the Workflow, warning the user for critical change that is diverse from the original plan.
+- The `.gemini/PLANNING.md` file contain the outline and planning phase of the model. Use this when ever creating new functions or implement any features. Use this as groundtruth and if the features or functions are outside the scope of the planning or not suitable for the Workflow, warning the user for critical change that is diverse from the original plan.
 
 ### How to use PLANNING.md:
 - **`## Folder Structure`**: I will use this section as a reference whenever I need to copy, move, or create a new file, ensuring adherence to the project's established directory organization.
