@@ -4,6 +4,10 @@ from prompt_toolkit.layout import Layout
 from chess_puzzle_ai_cli.modules.board.board_model import BoardModel
 from chess_puzzle_ai_cli.modules.board.board_presenter import BoardPresenter
 from chess_puzzle_ai_cli.modules.board.board_view import BoardView
+from chess_puzzle_ai_cli.modules.clock.clock_model import ClockModel
+from chess_puzzle_ai_cli.modules.clock.clock_presenter import ClockPresenter
+from chess_puzzle_ai_cli.modules.clock.clock_view import ClockView
+from prompt_toolkit.layout.containers import HSplit, VSplit, WindowAlign
 from chess_puzzle_ai_cli.utils.styles import default
 from prompt_toolkit.styles import Style, merge_styles
 from chess_puzzle_ai_cli.utils.config import game_config, terminal_config, player_info_config, lichess_config
@@ -46,13 +50,36 @@ def main() -> None:
     # Create a board view
     board_view = BoardView(board_presenter, board_presenter.get_board_display())
 
+    # Create a clock model
+    clock_model = ClockModel(args.clock_file)
+
+    # Create a clock presenter
+    clock_presenter = ClockPresenter(clock_model)
+
+    # Create a clock view
+    clock_view = ClockView(clock_presenter)
+
+    # Create the application layout
+    layout = Layout(
+        HSplit([
+            board_view,
+            VSplit([clock_view], align=WindowAlign.CENTER)
+        ])
+    )
+
     # Create the application
     application = Application(
-        layout=Layout(board_view),
+        layout=layout,
         full_screen=True,
         mouse_support=True,
         style=merge_styles([Style.from_dict(default)]),
     )
+
+    # Set up a timer to refresh the clock view periodically
+    def on_render(app):
+        clock_view.update()
+
+    application.before_render += on_render
 
     # Run the application
     application.run()
